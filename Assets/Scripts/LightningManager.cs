@@ -5,8 +5,8 @@ using UnityEngine;
 [ExecuteAlways]
 public class LightningManager : MonoBehaviour
 {
-    [SerializeField] private Light directionalLight;
-    [SerializeField] private LightningPreset Preset;
+    [SerializeField] private Light directionalLight = null;
+    [SerializeField] private LightningPreset Preset = null;
     [SerializeField, Range(0, 600)] private float TimeOfDay;
 
     private void Update()
