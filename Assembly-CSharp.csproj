@@ -97,6 +97,7 @@
     <Compile Include="Assets\Scripts\LeanTween\Framework\LeanTweenExt.cs" />
     <Compile Include="Assets\Scripts\LightningManager.cs" />
     <Compile Include="Assets\Scripts\LightningPreset.cs" />
+    <Compile Include="Assets\Scripts\Log.cs" />
     <Compile Include="Assets\Scripts\Tree.cs" />
     <None Include="Assets\Scripts\LeanTween\ReadMe.txt" />
     <None Include="Assets\Scripts\LeanTween\License.txt" />

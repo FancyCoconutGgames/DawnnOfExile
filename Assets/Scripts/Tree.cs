@@ -4,92 +4,23 @@ using UnityEngine;
 
 public class Tree : MonoBehaviour
 {
-    private Rigidbody[] children;
-    private Vector3 axeHit;
-    private float angle;
-    [ContextMenu("collapse")]
+    private Rigidbody[] treeParts;
+    private Vector3 axeHitPoint;
+    private float collapseAngle;
+
+    [ContextMenu("collapseTree")]
     public void CollapseTree()
     {
-        children = this.transform.GetComponentsInChildren<Rigidbody>();
-        
-
-        /*float angle = findCollapseAngle(axeHit);
-        Debug.Log(angle);*/
-        if (axeHit.z < 0.5 && axeHit.z > -0.5)
-        {
-            if(axeHit.z > 0)
-            {
-                angle = -88;
-            }
-            else
-            {
-                angle = 88;
-            }
-            foreach (Rigidbody child in children)
-            {
-                LeanTween.rotateX(this.gameObject, angle, 1.5f);
-                child.isKinematic = false;
-            }
-            return;
-        }
-        /*else if (axeHit.z > -0.5)
-        {
-            foreach (Rigidbody child in children)
-            {
-                LeanTween.rotateX(this.gameObject, -88, 1.5f);
-                child.isKinematic = false;
-            }
-            return;
-        }*/
-        else if (axeHit.x > -0.5 && axeHit.x < 0.5)
-        {
-            if (axeHit.x > 0)
-            {
-                angle = 88;
-            }
-            else
-            {
-                angle = -88;
-            }
-            foreach (Rigidbody child in children)
-            {
-                LeanTween.rotateZ(this.gameObject, angle, 1.5f);
-                child.isKinematic = false;
-            }
-            return;
-        }
-
-        /*else if (axeHit.x < 0.5)
-        {
-                foreach (Rigidbody child in children)
-                {
-                    LeanTween.rotateZ(this.gameObject, -88, 1.5f);
-                    child.isKinematic = false;
-                }
-                return;
-        }*/
-
+       treeParts = this.transform.GetComponentsInChildren<Rigidbody>();
+       CollapseInDirection();
        StartCoroutine(TurnOnGravity());
-    }
-
-    private float findCollapseAngle(Vector3 closestPoint)
-    {
-        if (closestPoint.z < 0)
-        {
-            return 88f;
-        }
-        else if (closestPoint.z > 0 )
-        {
-            return -88f;
-        }
-        return 0;
     }
 
     public void OnTriggerEnter(Collider coll)
     {
         if (coll.CompareTag("Ground"))
         {
-            foreach (Rigidbody child in children)
+            foreach (Rigidbody child in treeParts)
             {
                 child.useGravity = false;
                 child.constraints = RigidbodyConstraints.FreezePositionY;
@@ -98,25 +29,63 @@ public class Tree : MonoBehaviour
         }
         if (coll.CompareTag("Axe"))
         {
-            axeHit = coll.ClosestPointOnBounds(coll.gameObject.transform.position);
-            Debug.Log(axeHit);
+            axeHitPoint = coll.ClosestPointOnBounds(coll.gameObject.transform.position);
             CollapseTree();
         }
     }
-    public IEnumerator TurnOnGravity()
+
+    private void CollapseInDirection()
+    {
+        if (axeHitPoint.z < 0.5 && axeHitPoint.z > -0.5)
+        {
+            if (axeHitPoint.z > 0)
+            {
+                collapseAngle = -88;
+            }
+            else
+            {
+                collapseAngle = 88;
+            }
+            foreach (Rigidbody child in treeParts)
+            {
+                LeanTween.rotateX(this.gameObject, collapseAngle, 1.5f);
+                child.isKinematic = false;
+            }
+            return;
+        }
+        else if (axeHitPoint.x > -0.5 && axeHitPoint.x < 0.5)
+        {
+            if (axeHitPoint.x > 0)
+            {
+                collapseAngle = 88;
+            }
+            else
+            {
+                collapseAngle = -88;
+            }
+            foreach (Rigidbody child in treeParts)
+            {
+                LeanTween.rotateZ(this.gameObject, collapseAngle, 1.5f);
+                child.isKinematic = false;
+            }
+            return;
+        }
+    }
+    private IEnumerator TurnOnGravity()
     {
         yield return new WaitForSeconds(1f);
-        foreach (Rigidbody child in children)
+        foreach (Rigidbody child in treeParts)
         {
             child.useGravity = true;
         }
     }
-    public IEnumerator ChangeTreeState()
+    private IEnumerator ChangeTreeState()
     {
         yield return new WaitForSeconds(1f);
-        foreach (Rigidbody child in children)
+        foreach (Rigidbody child in treeParts)
         {
             Destroy(child.gameObject.GetComponent<Tree>());
+            child.gameObject.AddComponent<Log>();
             child.transform.parent = null;
         }
     }
